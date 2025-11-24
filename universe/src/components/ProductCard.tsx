@@ -1,5 +1,6 @@
 import type { Producto } from '../services/ecommerce/productos.services';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   producto: Producto;
@@ -8,6 +9,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ producto, onAddCart }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddCart = () => {
     if (onAddCart) {
@@ -19,8 +21,12 @@ export default function ProductCard({ producto, onAddCart }: ProductCardProps) {
     setImageError(true);
   };
 
+  const handleViewDetail = () => {
+    navigate(`/detail/${producto.id}`);
+  };
+
   return (
-    <div className="card h-100 shadow-sm hover-shadow">
+    <div className="card h-100 shadow-sm hover-shadow cursor-pointer" onClick={handleViewDetail} style={{ cursor: 'pointer' }}>
       <div style={{ height: '200px', overflow: 'hidden', backgroundColor: '#f0f0f0' }}>
         {!imageError && producto.imagen ? (
           <img
@@ -54,7 +60,10 @@ export default function ProductCard({ producto, onAddCart }: ProductCardProps) {
             </h5>
             <button
               className="btn btn-primary btn-sm"
-              onClick={handleAddCart}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddCart();
+              }}
               disabled={producto.stock === 0}
             >
               Agregar
